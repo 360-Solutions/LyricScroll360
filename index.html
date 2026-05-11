@@ -39,48 +39,47 @@
     overflow: hidden;
   }
 
-  /* Thin Top Control Bar */
+  /* Ultra-thin Top Control Bar */
   #top-bar {
     display: flex;
     flex-direction: row;
     align-items: center;
     background-color: var(--header-bg);
     border-bottom: 1px solid var(--border-color);
-    padding: 8px 12px;
-    gap: 15px;
-    overflow-x: auto;
-    white-space: nowrap;
+    padding: 6px 10px;
+    gap: 10px;
     z-index: 10;
   }
 
   #branding {
     display: flex;
     flex-direction: column;
-    line-height: 1.2;
+    line-height: 1.1;
     padding-right: 10px;
     border-right: 1px solid var(--border-color);
+    min-width: fit-content;
   }
 
   #app-title {
     font-weight: 600;
-    font-size: 16px;
+    font-size: 14px;
   }
 
   #app-author {
     color: #57606a;
-    font-size: 11px;
+    font-size: 10px;
   }
   
   body.dark-mode #app-author { color: #8b949e; }
 
-  /* Buttons */
+  /* Standard Buttons */
   button {
     background-color: var(--button-bg);
     color: var(--text-color);
     border: 1px solid var(--border-color);
-    padding: 8px 16px;
+    padding: 6px 12px;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 13px;
     font-family: inherit;
     cursor: pointer;
     font-weight: 500;
@@ -90,24 +89,32 @@
   button:active { background-color: var(--border-color); }
 
   #btn-select-song {
-    width: 220px;
+    flex-grow: 1;
+    max-width: 200px;
     text-overflow: ellipsis;
     overflow: hidden;
+    white-space: nowrap;
     text-align: left;
   }
 
-  /* Main Prompter Area */
+  /* Main Area Wrapper */
+  #main-content {
+    position: relative;
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+  }
+
+  /* Scrolling Prompter Area */
   #prompter-container {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 20px 40px;
+    padding: 20px 20px 20px 20px;
     background-color: var(--bg-color);
   }
 
   /* Visible Custom Scrollbar */
-  #prompter-container::-webkit-scrollbar {
-    width: 24px;
-  }
+  #prompter-container::-webkit-scrollbar { width: 24px; }
   #prompter-container::-webkit-scrollbar-track {
     background: var(--bg-color);
     border-left: 1px solid var(--border-color);
@@ -122,11 +129,11 @@
     font-size: 26px;
     line-height: 1.6;
     white-space: pre-wrap;
-    padding-bottom: 70vh;
+    padding-bottom: 80vh;
     max-width: 900px;
     margin: 0 auto;
     background-color: var(--container-bg);
-    padding: 30px;
+    padding: 20px 30px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
   }
@@ -146,13 +153,73 @@
 
   body.dark-mode .metadata { color: #8b949e; }
 
-  /* Modal Dialogs */
+  /* Floating Controls (Top Right) */
+  #floating-controls {
+    position: absolute;
+    top: 15px;
+    right: 35px; /* Offset to not block the custom scrollbar */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .fab-button {
+    background-color: var(--container-bg);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0.95;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  body.dark-mode .fab-button {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+
+  #fab-start {
+    background-color: #2da44e;
+    color: white;
+    border: none;
+  }
+  
+  #fab-start.playing {
+    background-color: #cf222e;
+  }
+
+  /* Vertical Slider Box */
+  #slider-popup {
+    display: none;
+    background-color: var(--container-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    height: 150px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  input[type="range"][orient="vertical"] {
+    writing-mode: bt-lr;
+    -webkit-appearance: slider-vertical;
+    width: 20px;
+    height: 130px;
+    margin: 0;
+  }
+
+  /* Modals */
   .modal-overlay {
     display: none;
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.6);
-    z-index: 100;
+    z-index: 200;
     justify-content: center;
     align-items: center;
   }
@@ -161,26 +228,19 @@
     background: var(--container-bg);
     padding: 20px;
     border-radius: 8px;
-    width: 85%;
-    max-width: 500px;
+    width: 90%;
+    max-width: 600px;
     max-height: 80vh;
     overflow-y: auto;
     border: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
   }
 
   .modal-title {
     font-size: 18px;
     font-weight: 600;
-    margin-bottom: 10px;
-  }
-
-  /* Large Speed Slider */
-  #speed-slider {
-    width: 100%;
-    height: 40px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
   }
 
   .song-list-item {
@@ -200,41 +260,43 @@
 
 <div id="top-bar">
   <div id="branding">
-    <span id="app-title">LyricScroll360 v0.001</span>
+    <span id="app-title">LyricScroll360 v0.002</span>
     <span id="app-author">by Jeremiah Keller</span>
   </div>
   
-  <button id="btn-toggle-scroll">Start Scrolling</button>
-  <button id="btn-speed">Speed: 50</button>
   <button id="btn-select-song">Select a Song...</button>
-  <button id="btn-theme">Invert Colors</button>
+  <button id="btn-theme">Invert</button>
 </div>
 
-<div id="prompter-container">
-  <div id="lyrics-display">Select a song to begin.</div>
-</div>
-
-<div id="modal-speed" class="modal-overlay">
-  <div class="modal-content">
-    <div class="modal-title">Adjust Scroll Speed</div>
-    <div style="text-align: center; font-size: 24px; font-weight: bold;" id="speed-display">50</div>
-    <input type="range" id="speed-slider" min="1" max="100" value="50">
-    <button onclick="closeModals()" style="margin-top: 10px;">Close</button>
+<div id="main-content">
+  
+  <div id="prompter-container">
+    <div id="lyrics-display">Select a song to begin.</div>
   </div>
+
+  <div id="floating-controls">
+    <button id="fab-start" class="fab-button">Start</button>
+    <button id="fab-speed" class="fab-button">Spd: 15</button>
+    
+    <div id="slider-popup">
+      <input type="range" orient="vertical" id="speed-slider" min="1" max="100" value="15">
+    </div>
+  </div>
+
 </div>
 
 <div id="modal-songs" class="modal-overlay">
   <div class="modal-content">
-    <div class="modal-title">Song Library</div>
+    <div class="modal-title">
+      <span>Song Library</span>
+      <button onclick="closeModals()">Close</button>
+    </div>
     <div id="song-list-container"></div>
-    <button onclick="closeModals()" style="margin-top: 10px;">Close</button>
   </div>
 </div>
 
 <script>
-  /* SONG DATABASE 
-     Includes artist, key, and bpm metadata for statistical tracking.
-  */
+  /* SONG DATABASE */
   const songs = {
     "I've Got Love": {
       artist: "Bitty McLean",
@@ -253,6 +315,61 @@ My love is a river that will never run dry
 Cause I've got love
 [C]                           [D]
 That will grow and grow I've got love want the world to know
+`
+    },
+    "The Real Thing": {
+      artist: "Bitty McLean",
+      key: "C",
+      bpm: "82",
+      lyrics: `
+[C]
+What we have
+[G]
+Is something special
+[Am]                       [F]
+To you I'll give my all in lords
+[C]                 [G]
+My love is unconditional
+
+[C]
+Good things come to those who wait
+[G]
+(I know your love was worth the wait)
+[Am]
+My life is complete now I found you
+[F]
+No need to search no more
+[C]
+I found what I am looking for
+
+[C]                       [G]
+We've got the real thing baby
+[Am]                 [F]
+In you I have no doubts
+[C]                       [G]
+This is what it's all about
+`
+    },
+    "Sweet Jane": {
+      artist: "The Velvet Underground",
+      key: "D",
+      bpm: "115",
+      lyrics: `
+[D] [A] [G] [Bm] [A]
+Standing on the corner,
+[D] [A] [G] [Bm] [A]
+Suitcase in my hand.
+[D] [A] [G] [Bm] [A]
+Jack is in his corset, Jane is in her vest,
+[D] [A] [G] [Bm] [A]
+And me I'm in a rock'n'roll band.
+
+[D] [A] [G]   [Bm] [A]
+Sweet Jane!
+[D] [A] [G]   [Bm] [A]
+Sweet Jane!
+[D] [A] [G]   [Bm] [A]
+Sweet Jane!
 `
     },
     "Knockin' On Heaven's Door": {
@@ -279,6 +396,60 @@ I feel like I'm knocking on heaven's door
 'Twas in another lifetime, one of toil and blood
 [E] [A] [B]
 When blackness was a virtue and the road was full of mud
+[E] [A] [B]
+I came in from the wilderness, a creature void of form
+[E] [B] [A] [E]
+"Come in," she said, "I'll give you shelter from the storm."
+`
+    },
+    "Three Little Birds": {
+      artist: "Bob Marley",
+      key: "A",
+      bpm: "75",
+      lyrics: `
+[A]
+Don't worry about a thing,
+[D]                                  [A]
+'Cause every little thing gonna be all right.
+[A]
+Singin': "Don't worry about a thing,
+[D]                                  [A]
+'Cause every little thing gonna be all right!"
+
+Rise up this mornin',
+[E]
+Smiled with the risin' sun,
+[A]                           [D]
+Three little birds pitch by my doorstep
+[A]
+Singin' sweet songs
+[E]
+Of melodies pure and true,
+[D]                              [A]
+Sayin', ("This is my message to you-ou-ou:")
+`
+    },
+    "Heart Of Gold": {
+      artist: "Neil Young",
+      key: "Em",
+      bpm: "86",
+      lyrics: `
+[Em] [C] [D] [G]
+
+[Em]                 [C]      [D]          [G]
+I want to live,         I want to give
+[Em]                 [C]      [D]          [G]
+I've been a miner for a heart of gold
+[Em]                 [C]      [D]          [G]
+It's these expressions I never give
+[Em]                           [G]
+That keep me searching for a heart of gold
+[C]                           [G]
+And I'm getting old.
+[Em]                           [G]
+Keep me searching for a heart of gold
+[C]                           [G]
+And I'm getting old.
 `
     }
   };
@@ -286,38 +457,34 @@ When blackness was a virtue and the road was full of mud
   // DOM Elements
   const container = document.getElementById('prompter-container');
   const lyricsDisplay = document.getElementById('lyrics-display');
-  const btnScroll = document.getElementById('btn-toggle-scroll');
-  const btnSpeed = document.getElementById('btn-speed');
   const btnSelectSong = document.getElementById('btn-select-song');
   const btnTheme = document.getElementById('btn-theme');
   
-  const modalSpeed = document.getElementById('modal-speed');
-  const modalSongs = document.getElementById('modal-songs');
+  const fabStart = document.getElementById('fab-start');
+  const fabSpeed = document.getElementById('fab-speed');
+  const sliderPopup = document.getElementById('slider-popup');
   const speedSlider = document.getElementById('speed-slider');
-  const speedDisplay = document.getElementById('speed-display');
+  
+  const modalSongs = document.getElementById('modal-songs');
   const songListContainer = document.getElementById('song-list-container');
 
-  let scrollInterval;
+  let animationFrameId;
   let isScrolling = false;
+  let accumulatedScroll = 0;
   let currentSong = "";
 
   /* INITIALIZATION */
   function init() {
-    // Load Theme
     if (localStorage.getItem('lyricScrollTheme') === 'dark') {
       document.body.classList.add('dark-mode');
     }
     
-    // Load Speed
     const savedSpeed = localStorage.getItem('lyricScrollSpeed');
     if (savedSpeed) {
       speedSlider.value = savedSpeed;
-      updateSpeedDisplay(savedSpeed);
-    } else {
-      updateSpeedDisplay(50); // Default
+      fabSpeed.textContent = "Spd: " + savedSpeed;
     }
 
-    // Populate Song List Modal
     for (const title in songs) {
       const div = document.createElement('div');
       div.className = 'song-list-item';
@@ -326,11 +493,10 @@ When blackness was a virtue and the road was full of mud
       songListContainer.appendChild(div);
     }
     
-    // Auto-load the first song to start
     loadSong("I've Got Love");
   }
 
-  /* SONG LOADING & FORMATTING */
+  /* SONG LOADING */
   function loadSong(title) {
     currentSong = title;
     const songData = songs[title];
@@ -348,49 +514,67 @@ When blackness was a virtue and the road was full of mud
     stopScrolling();
   }
 
-  /* SCROLLING LOGIC */
+  /* SMOOTH SCROLLING ENGINE */
+  function scrollStep() {
+    if (!isScrolling) return;
+    
+    const speed = parseInt(speedSlider.value);
+    
+    // Convert speed (1-100) to pixels per frame. 
+    // This allows very slow speeds to accumulate sub-pixels cleanly.
+    const scrollAmount = speed * 0.03; 
+    accumulatedScroll += scrollAmount;
+
+    if (accumulatedScroll >= 1) {
+      const pixelsToScroll = Math.floor(accumulatedScroll);
+      container.scrollTop += pixelsToScroll;
+      accumulatedScroll -= pixelsToScroll;
+    }
+    
+    animationFrameId = requestAnimationFrame(scrollStep);
+  }
+
   function startScrolling() {
     if (!currentSong) return;
     isScrolling = true;
-    btnScroll.textContent = "Stop Scrolling";
-    btnScroll.style.backgroundColor = "#ffcccc"; // Visual indicator
-    
-    // Fast 20ms interval for smooth continuous movement
-    scrollInterval = setInterval(() => {
-      const speed = parseInt(speedSlider.value);
-      // Speed multiplier formula to allow very fast scrolling at 100
-      container.scrollTop += (speed * 0.05); 
-    }, 20);
+    fabStart.textContent = "Stop";
+    fabStart.classList.add("playing");
+    accumulatedScroll = 0;
+    scrollStep();
   }
 
   function stopScrolling() {
     isScrolling = false;
-    btnScroll.textContent = "Start Scrolling";
-    btnScroll.style.backgroundColor = ""; 
-    clearInterval(scrollInterval);
+    fabStart.textContent = "Start";
+    fabStart.classList.remove("playing");
+    cancelAnimationFrame(animationFrameId);
   }
 
-  btnScroll.onclick = () => isScrolling ? stopScrolling() : startScrolling();
+  fabStart.onclick = () => {
+    isScrolling ? stopScrolling() : startScrolling();
+  };
 
-  /* MODAL & SETTINGS LOGIC */
-  function closeModals() {
-    modalSpeed.style.display = "none";
-    modalSongs.style.display = "none";
-  }
-
-  function updateSpeedDisplay(val) {
-    speedDisplay.textContent = val;
-    btnSpeed.textContent = "Speed: " + val;
-  }
-
-  btnSpeed.onclick = () => modalSpeed.style.display = "flex";
-  btnSelectSong.onclick = () => modalSongs.style.display = "flex";
+  /* UI INTERACTIONS */
+  fabSpeed.onclick = () => {
+    sliderPopup.style.display = sliderPopup.style.display === "flex" ? "none" : "flex";
+  };
 
   speedSlider.oninput = (e) => {
     const val = e.target.value;
-    updateSpeedDisplay(val);
+    fabSpeed.textContent = "Spd: " + val;
     localStorage.setItem('lyricScrollSpeed', val);
   };
+
+  // Close slider if clicking outside
+  container.addEventListener('click', () => {
+    sliderPopup.style.display = "none";
+  });
+
+  btnSelectSong.onclick = () => modalSongs.style.display = "flex";
+
+  function closeModals() {
+    modalSongs.style.display = "none";
+  }
 
   btnTheme.onclick = () => {
     document.body.classList.toggle('dark-mode');

@@ -16,7 +16,7 @@
     --button-bg: #f6f8fa;
     --button-hover: #f3f4f6;
     --header-bg: #ffffff;
-    --floating-bg: rgba(255, 255, 255, 0.85); /* Semi-transparent */
+    --floating-bg: rgba(255, 255, 255, 0.90);
   }
 
   body.dark-mode {
@@ -28,7 +28,7 @@
     --button-bg: #21262d;
     --button-hover: #30363d;
     --header-bg: #161b22;
-    --floating-bg: rgba(22, 27, 34, 0.85);
+    --floating-bg: rgba(22, 27, 34, 0.90);
   }
 
   body {
@@ -42,7 +42,6 @@
     overflow: hidden;
   }
 
-  /* Top Bar */
   #top-bar {
     display: flex;
     align-items: center;
@@ -51,12 +50,11 @@
     padding: 8px 12px;
     gap: 8px;
     z-index: 10;
-    overflow-x: auto; /* Enables horizontal scrolling */
+    overflow-x: auto;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Hides scrollbar on top-bar for cleaner look */
   #top-bar::-webkit-scrollbar { display: none; } 
 
   #branding {
@@ -65,7 +63,7 @@
     line-height: 1.1;
     padding-right: 10px;
     border-right: 1px solid var(--border-color);
-    flex-shrink: 0; /* Prevents squishing */
+    flex-shrink: 0;
   }
 
   #app-title { font-weight: 600; font-size: 14px; }
@@ -81,7 +79,7 @@
     font-size: 14px;
     cursor: pointer;
     font-weight: 500;
-    flex-shrink: 0; /* Prevents buttons from squishing */
+    flex-shrink: 0;
   }
   button:active { background-color: var(--border-color); }
 
@@ -92,7 +90,6 @@
     text-overflow: ellipsis; 
   }
 
-  /* Main Scrolling Area */
   #main-content {
     position: relative;
     flex-grow: 1;
@@ -125,7 +122,6 @@
     border-radius: 6px;
   }
 
-  /* Floating Chord CSS Logic */
   .chord-anchor {
     position: relative;
     display: inline;
@@ -158,7 +154,6 @@
   }
   body.dark-mode .song-notes { color: #58a6ff; }
 
-  /* Floating Controls */
   #floating-controls {
     position: absolute;
     top: 15px;
@@ -181,33 +176,30 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     min-width: 80px;
     text-align: center;
-    backdrop-filter: blur(4px); /* Adds a slight blur to the background for readability */
+    backdrop-filter: blur(8px);
   }
 
-  #fab-start { background-color: rgba(45, 164, 78, 0.85); color: white; border: none; }
-  #fab-start.playing { background-color: rgba(207, 34, 46, 0.85); }
-  #fab-top { background-color: rgba(9, 105, 218, 0.85); color: white; border: none; }
+  #fab-start { background-color: rgba(45, 164, 78, 0.90); color: white; border: none; }
+  #fab-start.playing { background-color: rgba(207, 34, 46, 0.90); }
+  #fab-top { background-color: rgba(9, 105, 218, 0.90); color: white; border: none; }
 
+  /* New Horizontal Slider Container */
   #slider-popup {
     display: none;
     background-color: var(--floating-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 20px 10px;
+    padding: 15px 20px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    height: 180px;
-    backdrop-filter: blur(4px);
+    width: 200px;
+    backdrop-filter: blur(8px);
   }
 
-  input[type="range"][orient="vertical"] {
-    writing-mode: bt-lr;
-    -webkit-appearance: slider-vertical;
-    width: 30px;
-    height: 150px;
+  input[type="range"] {
+    width: 100%;
     margin: 0;
   }
 
-  /* Modals */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -272,13 +264,13 @@
 
 <div id="top-bar">
   <div id="branding">
-    <span id="app-title">LyricScroll360 v0.005</span>
+    <span id="app-title">LyricScroll360 v0.006</span>
     <span id="app-author">by Jeremiah Keller</span>
   </div>
   <button id="btn-select-song">Library</button>
   <button id="btn-add-song">Add</button>
   <button id="btn-theme">Invert</button>
-  </div>
+</div>
 
 <div id="main-content">
   <div id="prompter-container">
@@ -292,7 +284,7 @@
     <button id="fab-start" class="fab-button">Start</button>
     <button id="fab-speed" class="fab-button">Spd: 6</button>
     <div id="slider-popup">
-      <input type="range" orient="vertical" id="speed-slider" min="1" max="100" value="6">
+      <input type="range" id="speed-slider" min="1" max="100" value="6">
     </div>
   </div>
 </div>
@@ -430,7 +422,6 @@
   function scrollStep() {
     if (!isScrolling) return;
     const speed = parseInt(speedSlider.value);
-    // Adjusted multiplier for finer control at lower speeds
     accumulatedScroll += (speed * speed) * 0.001; 
     if (accumulatedScroll >= 1) {
       const pixels = Math.floor(accumulatedScroll);
@@ -460,7 +451,7 @@
   fabTop.onclick = () => { container.scrollTop = 0; };
 
   fabSpeed.onclick = (e) => {
-    e.stopPropagation(); // Prevents click from bubbling to document
+    e.stopPropagation(); 
     sliderPopup.style.display = sliderPopup.style.display === "none" ? "block" : "none";
   };
   
@@ -469,7 +460,6 @@
     localStorage.setItem('lyricScrollSpeed', e.target.value);
   };
 
-  // Close slider when clicking anywhere else
   document.addEventListener('click', (e) => {
     if (sliderPopup.style.display === "block" && e.target !== fabSpeed && e.target !== speedSlider) {
       sliderPopup.style.display = "none";

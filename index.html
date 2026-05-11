@@ -39,7 +39,6 @@
     overflow: hidden;
   }
 
-  /* Top Bar */
   #top-bar {
     display: flex;
     align-items: center;
@@ -69,7 +68,7 @@
     background-color: var(--button-bg);
     color: var(--text-color);
     border: 1px solid var(--border-color);
-    padding: 10px 14px; /* Larger touch targets */
+    padding: 10px 14px;
     border-radius: 6px;
     font-size: 14px;
     cursor: pointer;
@@ -79,7 +78,6 @@
 
   #btn-select-song { flex-grow: 1; max-width: 200px; text-align: left; overflow: hidden; text-overflow: ellipsis; }
 
-  /* Main Scrolling Area */
   #main-content {
     position: relative;
     flex-grow: 1;
@@ -94,28 +92,42 @@
     background-color: var(--bg-color);
   }
 
-  #prompter-container::-webkit-scrollbar { width: 30px; } /* Wider scrollbar */
+  #prompter-container::-webkit-scrollbar { width: 30px; }
   #prompter-container::-webkit-scrollbar-track { background: var(--bg-color); border-left: 1px solid var(--border-color); }
   #prompter-container::-webkit-scrollbar-thumb { background: #8c959f; border-radius: 15px; border: 5px solid var(--bg-color); }
 
   #lyrics-display {
     font-size: 26px;
-    line-height: 1.6;
+    line-height: 2.4; /* Increased line height to make room for floating chords */
     white-space: pre-wrap;
     padding-bottom: 80vh;
     max-width: 900px;
     margin: 0 auto;
     background-color: var(--container-bg);
-    padding: 20px 30px;
+    padding: 30px 30px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
   }
 
-  .chord { color: var(--chord-color); font-weight: 600; }
+  /* Floating Chord CSS Logic */
+  .chord-anchor {
+    position: relative;
+    display: inline;
+  }
+  
+  .chord-label {
+    position: absolute;
+    bottom: 0.9em; /* Floats the chord above the text */
+    left: 0;
+    color: var(--chord-color);
+    font-weight: 600;
+    font-size: 0.75em;
+    font-family: monospace;
+  }
+
   .metadata { font-size: 14px; color: #57606a; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
   body.dark-mode .metadata { color: #8b949e; }
 
-  /* Floating Controls */
   #floating-controls {
     position: absolute;
     top: 15px;
@@ -156,12 +168,11 @@
   input[type="range"][orient="vertical"] {
     writing-mode: bt-lr;
     -webkit-appearance: slider-vertical;
-    width: 30px; /* Thicker slider for fat fingers */
+    width: 30px;
     height: 150px;
     margin: 0;
   }
 
-  /* Modals */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -183,7 +194,6 @@
     overflow: hidden;
   }
 
-  /* Sticky Modal Header */
   .modal-header {
     padding: 15px;
     border-bottom: 1px solid var(--border-color);
@@ -227,13 +237,13 @@
 
 <div id="top-bar">
   <div id="branding">
-    <span id="app-title">LyricScroll360 v0.003</span>
+    <span id="app-title">LyricScroll360 v0.004</span>
     <span id="app-author">by Jeremiah Keller</span>
   </div>
   <button id="btn-select-song">Library</button>
   <button id="btn-add-song">+ Add Text</button>
   <button id="btn-theme">Invert</button>
-  <button id="btn-fullscreen">⛶</button>
+  <button id="btn-fullscreen">Fullscreen</button>
 </div>
 
 <div id="main-content">
@@ -284,7 +294,6 @@
   let library = JSON.parse(localStorage.getItem('lyricScrollLibrary')) || [];
   let currentSongIndex = null;
   
-  // DOM Elements
   const container = document.getElementById('prompter-container');
   const lyricsDisplay = document.getElementById('lyrics-display');
   const fabStart = document.getElementById('fab-start');
@@ -311,14 +320,12 @@
     if (library.length > 0) loadSong(0);
   }
 
-  /* TEXT PARSER ENGINE */
   function importSong() {
     const raw = document.getElementById('import-text').value;
     if (!raw.trim()) return;
 
     let artist = "Unknown", title = "Untitled", bpm = "-", key = "-";
     
-    // Extract metadata
     const lines = raw.split('\n');
     const lyricsLines = [];
     
@@ -336,7 +343,6 @@
     };
 
     library.push(newSong);
-    // Sort library alphabetically by Artist
     library.sort((a, b) => a.artist.localeCompare(b.artist));
     localStorage.setItem('lyricScrollLibrary', JSON.stringify(library));
     
@@ -352,7 +358,7 @@
       const a = document.createElement('a');
       a.className = 'song-link';
       a.href = '#';
-      a.textContent = `${song.artist} - ${song.title} [${song.key} / ${song.bpm}bpm]`;
+      a.textContent = song.artist + " - " + song.title + " [" + song.key + " / " + song.bpm + "bpm]";
       a.onclick = (e) => { e.preventDefault(); loadSong(idx); };
       songListContainer.appendChild(a);
     });
@@ -363,8 +369,10 @@
     const song = library[index];
     document.getElementById('btn-select-song').textContent = song.title;
     
-    let html = `<div class='metadata'>Artist: ${song.artist} | Key: ${song.key} | BPM: ${song.bpm}</div>`;
-    let rawText = song.lyrics.replace(/\[(.*?)\]/g, '<span class="chord">[$1]</span>');
+    let html = "<div class='metadata'>Artist: " + song.artist + " | Key: " + song.key + " | BPM: " + song.bpm + "</div>";
+    
+    // The JavaScript magic that creates the floating chords
+    let rawText = song.lyrics.replace(/\[(.*?)\]/g, '<span class="chord-anchor"><span class="chord-label">$1</span></span>');
     html += rawText;
     
     lyricsDisplay.innerHTML = html;
@@ -381,7 +389,6 @@
     dlAnchorElem.click();
   }
 
-  /* SCROLLING */
   function scrollStep() {
     if (!isScrolling) return;
     const speed = parseInt(speedSlider.value);
@@ -413,7 +420,6 @@
   fabStart.onclick = () => isScrolling ? stopScrolling() : startScrolling();
   fabTop.onclick = () => { container.scrollTop = 0; };
 
-  /* UI */
   fabSpeed.onclick = () => sliderPopup.style.display = sliderPopup.style.display === "none" ? "block" : "none";
   speedSlider.oninput = (e) => {
     fabSpeed.textContent = "Spd: " + e.target.value;
